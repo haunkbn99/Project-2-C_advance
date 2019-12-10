@@ -32,6 +32,8 @@ int checkVertex(Graph graph, char *token);
 void readDataMap(Graph graph);
 int trim(char *s);
 
+void SearchBusStation(Graph graph);
+
 int menu()
 {
     int choose;
@@ -53,24 +55,26 @@ int main()
 
     Graph g = createGraph();
     readDataMap(g);
-    printJRB(g.vertices);
-    JRB node = make_jrb();
-    node = jrb_find_str(g.busLine, "88");
-    printJRB((JRB)jval_v(node->val));
-    printf("do dai cua %s -> %s la: %.2lf\n","","",getEdgeValue(g,getIdVertex(g,"Pho Nhon"),getIdVertex(g,"Quoc lo 32")));
-    node = jrb_find_int(g.edges,getIdVertex(g,"Pho Nhon"));
-    printf("%d\n",node->key);
-    node = jrb_find_int(g.edges,getIdVertex(g,"Quoc lo 32"));
-    printf("%d\n",node->key);
+    // printJRB(g.vertices);
+    // JRB node = make_jrb();
+    // node = jrb_find_str(g.busLine, "88");
+    // printJRB((JRB)jval_v(node->val));
+    // printf("do dai cua %s -> %s la: %.2lf\n", "", "", getEdgeValue(g, getIdVertex(g, "Pho Nhon"), getIdVertex(g, "Quoc lo 32")));
+    // node = jrb_find_int(g.edges, getIdVertex(g, "Pho Nhon"));
+    // printf("%d\n", node->key);
+    // node = jrb_find_int(g.edges, getIdVertex(g, "Quoc lo 32"));
+    // printf("%d\n", node->key);
+    // printf("%s\n -> %D\n", getVertex(g, 10), 10);
     int output[100];
-    int total = outdegree(g,2,output);
-    printf("%s lien ke:\n",getVertex(g,2));
+    int total = outdegree(g, 10, output);
+    printf("%s lien ke:\n", getVertex(g, 10));
     for (int i = 0; i < total; i++)
     {
-        printf("%s: -> ",getVertex(g,output[i]));
+        printf("%s: -> ", getVertex(g, output[i]));
     }
-    
-    
+    printf("\n");
+    SearchBusStation(g);
+
     // while (1)
     // {
     //     int check = menu();
@@ -164,7 +168,8 @@ void addEdge(Graph graph, int v1, int v2, double weight)
     {
         JRB node = jrb_find_int(graph.edges, v1);
         tree = (JRB)jval_v(node->val);
-        jrb_insert_int(tree, v2, new_jval_d(weight));
+        if (jrb_find_int(tree, v2) == NULL)
+            jrb_insert_int(tree, v2, new_jval_d(weight));
     }
 }
 double getEdgeValue(Graph graph, int v1, int v2)
@@ -342,4 +347,24 @@ void readDataMap(Graph graph)
     }
 
     fclose(f);
+}
+void SearchBusStation(Graph graph)
+{
+    char name[100];
+    int output[100];
+    printf("Nhập tên điểm Bus bạn muốn tìm: ");
+    scanf("%[^\n]s", name);
+    if (getIdVertex(graph, name) == -1)
+        printf("Không tồn tại điểm Bus: %s\n", name);
+    else
+    {
+        printf("Điểm Bus: %s - ID: %d\n", name, getIdVertex(graph, name));
+        printf("Những Điểm Bus liền kề: ");
+        int total = outdegree(graph, getIdVertex(graph, name), output);
+        for (int i = 0; i < total; i++)
+        {
+            printf("%s, ", getVertex(graph, output[i]));
+        }
+        printf("\n");
+    }
 }
