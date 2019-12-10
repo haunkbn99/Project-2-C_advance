@@ -350,7 +350,8 @@ void readDataMap(Graph graph)
 }
 void SearchBusStation(Graph graph)
 {
-    char name[100];
+    char *name;
+    name = (char *)malloc(100 * sizeof(char));
     int output[100];
     printf("Nhập tên điểm Bus bạn muốn tìm: ");
     scanf("%[^\n]s", name);
@@ -364,6 +365,24 @@ void SearchBusStation(Graph graph)
         for (int i = 0; i < total; i++)
         {
             printf("%s, ", getVertex(graph, output[i]));
+        }
+        printf("\n");
+        printf("Những tuyến Bus đi qua %s: ", name);
+        JRB node = make_jrb();
+        jrb_traverse(node, graph.busLine)
+        {
+            if (node != NULL)
+            {
+                JRB tree = make_jrb();
+                tree = (JRB)jval_v(node->val);
+                if (tree != NULL)
+                {
+                    if (jrb_find_int(tree, getIdVertex(graph, name)) != NULL)
+                    {
+                        printf("%s, ", jval_s(node->key));
+                    }
+                }
+            }
         }
         printf("\n");
     }
