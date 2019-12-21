@@ -23,29 +23,38 @@ void addVertex(Graph graph, int id, char *name);
 char *getVertex(Graph graph, int id);
 int getIdVertex(Graph graph, char *name);
 void printJRB(JRB graph);
+void printBusLine(JRB tree);
 void addEdge(Graph graph, int v1, int v2, double weight);
 double getEdgeValue(Graph graph, int v1, int v2);
 int indegree(Graph graph, int v, int *output);
 int outdegree(Graph graph, int v, int *output);
 int addBusLine(Graph graph, char *name, int idVertex);
-int checkVertex(Graph graph, char *token);
+int checkVertex(JRB tree, char *token);
 void readDataMap(Graph graph);
 int trim(char *s);
-
 void SearchBusStation(Graph graph);
+void printVertex(int v);
+void DFS(Graph graph, int start, int stop, void (*func)(int));
+void check2location(Graph graph);
+void AdjacetLocation(Graph graph);
+void Case5(Graph graph);
+void Case6(Graph graph);
+double shortesPath(Graph graph, int s, int t, int *path, int *length);
 
 int menu()
 {
     int choose;
-    printf("------- Quan Ly BUS Ha Noi -------\n");
-    printf("----------------------------------\n");
-    printf("- %-30s -\n", "1: Tim mot dia diem");
-    printf("- %-30s -\n", "2: Kiem tra hai diem");
-    printf("- %-30s -\n", "3: Cac dia diem noi tiep");
-    printf("- %-30s -\n", "4: Tim duong di ngan nhat");
-    printf("- %-30s -\n", "5: Liet ke tuyen bus");
-    printf("- %-30s -\n", "6: Liet ke diem bus mot tuyen");
-    printf("- %-30s -\n", "7: Thoat");
+    printf("\n\n");
+    printf("------------------ Quan Ly BUS Ha Noi -----------------\n");
+    printf("-------------------------------------------------------\n");
+    printf("- %-50s -\n", "1: Find location througn ID");
+    printf("- %-50s -\n", "2: Check connection between 2 location");
+    printf("- %-50s -\n", "3: Adjacet location");
+    printf("- %-50s -\n", "4: Sortest path between 2 location");
+    printf("- %-50s -\n", "5: Show all buses through a location");
+    printf("- %-50s -\n", "6: Show buses through all location");
+    printf("- %-50s -\n", "7: Exit");
+    printf("\nYour choose: ");
     scanf("%d", &choose);
     return choose;
 }
@@ -55,49 +64,43 @@ int main()
 
     Graph g = createGraph();
     readDataMap(g);
+    // //in toan bo diem bus
     // printJRB(g.vertices);
     // JRB node = make_jrb();
-    // node = jrb_find_str(g.busLine, "88");
+    // node = jrb_find_str(g.busLine, "89");
+    // //in tuyen bus so 88
+    // printf("tuyen bus so 89\n");
     // printJRB((JRB)jval_v(node->val));
-    // printf("do dai cua %s -> %s la: %.2lf\n", "", "", getEdgeValue(g, getIdVertex(g, "Pho Nhon"), getIdVertex(g, "Quoc lo 32")));
-    // node = jrb_find_int(g.edges, getIdVertex(g, "Pho Nhon"));
-    // printf("%d\n", node->key);
-    // node = jrb_find_int(g.edges, getIdVertex(g, "Quoc lo 32"));
-    // printf("%d\n", node->key);
-    // printf("%s\n -> %D\n", getVertex(g, 10), 10);
-    int output[100];
-    int total = outdegree(g, 10, output);
-    printf("%s lien ke:\n", getVertex(g, 10));
-    for (int i = 0; i < total; i++)
+    while (1)
     {
-        printf("%s: -> ", getVertex(g, output[i]));
+        int check = menu();
+        switch (check)
+        {
+        case 1:
+            SearchBusStation(g);
+            break;
+        case 2:
+            // check2location(g);
+            break;
+        case 3:
+            AdjacetLocation(g);
+            break;
+        case 4:
+
+            break;
+        case 5:
+            Case5(g);
+            break;
+        case 6:
+            Case6(g);
+            break;
+        case 7:
+            return 0;
+        default:
+            return 0;
+            break;
+        }
     }
-    printf("\n");
-    SearchBusStation(g);
-
-    // while (1)
-    // {
-    //     int check = menu();
-    //     switch (check)
-    //     {
-    //     case 1:
-    //         break;
-    //     case 2:
-
-    //         break;
-    //     case 3:
-
-    //         break;
-    //     case 4:
-
-    //         break;
-    //     case 7:
-    //         return 0;
-    //     default:
-    //         return 0;
-    //         break;
-    //     }
-    // }
 }
 
 Graph createGraph()
@@ -229,6 +232,8 @@ int outdegree(Graph graph, int v, int *output)
 }
 int addBusLine(Graph graph, char *name, int idVertex)
 {
+    JRB tmp = make_jrb();
+    int max = 0;
     if (jrb_find_str(graph.busLine, name) == NULL)
     {
         JRB tree = make_jrb();
@@ -237,7 +242,11 @@ int addBusLine(Graph graph, char *name, int idVertex)
         {
             JRB node = jrb_find_str(graph.busLine, name);
             JRB node2 = (JRB)jval_v(node->val);
-            jrb_insert_int(node2, idVertex, new_jval_s(getVertex(graph, idVertex)));
+            jrb_traverse(tmp, node2)
+            {
+                max++;
+            }
+            jrb_insert_int(node2, max, new_jval_s(getVertex(graph, idVertex)));
             return 1;
         }
         else
@@ -252,7 +261,11 @@ int addBusLine(Graph graph, char *name, int idVertex)
         {
             JRB node = jrb_find_str(graph.busLine, name);
             JRB node2 = (JRB)jval_v(node->val);
-            jrb_insert_int(node2, idVertex, new_jval_s(getVertex(graph, idVertex)));
+            jrb_traverse(tmp, node2)
+            {
+                max++;
+            }
+            jrb_insert_int(node2, max, new_jval_s(getVertex(graph, idVertex)));
             return 1;
         }
         else
@@ -261,6 +274,42 @@ int addBusLine(Graph graph, char *name, int idVertex)
             return 0;
         }
     }
+}
+void printVertex(int v)
+{
+    printf("%4d", v);
+}
+void DFS(Graph graph, int start, int stop, void (*func)(int))
+{
+    int visited[100];
+    for (int i = 0; i < 100; i++)
+        visited[i] = 0;
+    Dllist stack = new_dllist();
+    dll_append(stack, new_jval_i(start));
+
+    while (!dll_empty(stack))
+    {
+        Dllist node = dll_last(stack);
+        int u = jval_i(node->val);
+        dll_delete_node(node);
+        if (u == stop)
+            break;
+        if (visited[u] == 0)
+        {
+            func(u);
+            visited[u] = 1;
+            int output[100];
+
+            for (int i = outdegree(graph, u, output) - 1; i >= 0; i--)
+            {
+                if (visited[output[i]] == 0)
+                {
+                    dll_append(stack, new_jval_i(output[i]));
+                }
+            }
+        }
+    }
+    func(stop);
 }
 
 int trim(char *s)
@@ -287,10 +336,10 @@ int trim(char *s)
 
     return d;
 }
-int checkVertex(Graph graph, char *token)
+int checkVertex(JRB tree, char *token)
 {
     JRB node = make_jrb();
-    jrb_traverse(node, graph.vertices)
+    jrb_traverse(node, tree)
     {
         if (strcmp(token, jval_s(node->val)) == 0)
         {
@@ -308,7 +357,7 @@ void readDataMap(Graph graph)
     preveous = (char *)malloc(100 * sizeof(char));
 
     FILE *f;
-    f = fopen("dataBus.txt", "r");
+    f = fopen("dataBus2.txt", "r");
     if (f == NULL)
     {
         printf(" Error\n");
@@ -327,7 +376,7 @@ void readDataMap(Graph graph)
         token = strtok(All[i].line, "-");
         trim(token);
         strcpy(preveous, token);
-        if (checkVertex(graph, token) == 0)
+        if (checkVertex(graph.vertices, token) == 0)
             addVertex(graph, idVertex++, token);
         addBusLine(graph, All[i].tuyen, getIdVertex(graph, token));
         while (token != NULL)
@@ -336,7 +385,7 @@ void readDataMap(Graph graph)
             if (token != NULL)
             {
                 trim(token);
-                if (checkVertex(graph, token) == 0)
+                if (checkVertex(graph.vertices, token) == 0)
                     addVertex(graph, idVertex++, token);
                 addBusLine(graph, All[i].tuyen, getIdVertex(graph, token));
                 addEdge(graph, getIdVertex(graph, preveous), getIdVertex(graph, token), 1);
@@ -351,39 +400,139 @@ void readDataMap(Graph graph)
 void SearchBusStation(Graph graph)
 {
     char *name;
+    int id;
     name = (char *)malloc(100 * sizeof(char));
     int output[100];
-    printf("Nhập tên điểm Bus bạn muốn tìm: ");
-    scanf("%[^\n]s", name);
-    if (getIdVertex(graph, name) == -1)
-        printf("Không tồn tại điểm Bus: %s\n", name);
+    printf("Input the ID BusStation: ");
+    scanf("%d", &id);
+    if (getVertex(graph, id) == NULL)
+        printf("Don't exist the ID: %d\n", id);
     else
     {
-        printf("Điểm Bus: %s - ID: %d\n", name, getIdVertex(graph, name));
-        printf("Những Điểm Bus liền kề: ");
-        int total = outdegree(graph, getIdVertex(graph, name), output);
-        for (int i = 0; i < total; i++)
-        {
-            printf("%s, ", getVertex(graph, output[i]));
-        }
-        printf("\n");
-        printf("Những tuyến Bus đi qua %s: ", name);
-        JRB node = make_jrb();
-        jrb_traverse(node, graph.busLine)
-        {
-            if (node != NULL)
-            {
-                JRB tree = make_jrb();
-                tree = (JRB)jval_v(node->val);
-                if (tree != NULL)
-                {
-                    if (jrb_find_int(tree, getIdVertex(graph, name)) != NULL)
-                    {
-                        printf("%s, ", jval_s(node->key));
-                    }
-                }
-            }
-        }
-        printf("\n");
+
+        printf("\n\nThe BusStation | ID: %d - Name: %s |\n", id, getVertex(graph, id));
     }
 }
+void check2location(Graph graph)
+{
+    char *name1, name2;
+    name1 = (char *)malloc(100 * sizeof(char));
+    name2 = (char *)malloc(100 * sizeof(char));
+    printf("Input Name BusStation 1: ");
+    fflush(stdin);
+    scanf("%[^\n]s", name1);
+    printf("Input Name BusStation 2: ");
+    fflush(stdin);
+    scanf("%[^\n]s", name2);
+    DFS(graph, getIdVertex(graph, name1), getIdVertex(graph, name2), printVertex);
+}
+void AdjacetLocation(Graph graph)
+{
+    char *name;
+    int output[100];
+    name = (char *)malloc(100 * sizeof(char));
+    printf("Input name of BusStation: ");
+    fflush(stdin);
+    scanf("%[^\n]s", name);
+    int total = outdegree(graph, getIdVertex(graph, name), output);
+    printf("\nBusStations adjacet %s are\n\n", name);
+    printf("- %-5s | %-50s |\n\n", "ID", "Name");
+    for (int i = 0; i < total; i++)
+    {
+        printf("- %-5d | %-50s |\n", output[i], getVertex(graph, output[i]));
+    }
+}
+void Case5(Graph graph)
+{
+    char *name;
+    int output[100];
+    name = (char *)malloc(100 * sizeof(char));
+    printf("Input name of BusStation: ");
+    fflush(stdin);
+    scanf("%[^\n]s", name);
+    JRB node = make_jrb();
+    JRB node2 = make_jrb();
+    printf("\nThe BusLine through\n\n");
+    jrb_traverse(node, graph.busLine)
+    {
+        if (node != NULL)
+        {
+            JRB tree = make_jrb();
+            tree = (JRB)jval_v(node->val);
+            if (checkVertex(tree, name))
+            {
+                printf("- %s\n", jval_s(node->key));
+            }
+        }
+    }
+}
+void Case6(Graph graph)
+{
+    char *name;
+    int output[100];
+    name = (char *)malloc(100 * sizeof(char));
+    printf("Input name of BusLine: ");
+    fflush(stdin);
+    scanf("%[^\n]s", name);
+    JRB node = make_jrb();
+    node = jrb_find_str(graph.busLine, name);
+    if (node == NULL)
+        printf("Don't exist the BusLine: %s\n", name);
+    else
+    {
+        JRB tree = (JRB)jval_v(node->val);
+        JRB node2 = make_jrb();
+        printf("- %-5s | %-50s |\n", "ID", "Name");
+        jrb_traverse(node2, tree)
+        {
+            printf("- %-5d | %-50s |\n", getIdVertex(graph, jval_s(node2->val)), jval_s(node2->val));
+        }
+    }
+}
+
+// double shortesPath(Graph graph, int s, int t, int *path, int *length)
+// {
+//     double distance[1000], min;
+//     int previous[1000], u, visited[1000], output[100], number;
+//     for (int i = 0; i < 1000; i++)
+//     {
+//         distance[i] = INFINITIVE_VALUE;
+//         visited[i] = 0;
+//         previous[i] = 0;
+//     }
+//     distance[s] = 0;
+//     previous[s] = s;
+//     visited[s] = 1;
+//     Dllist ptr, queue, node;
+//     queue = new_dllist();
+//     dll_append(queue, new_jval_i(s));
+//     while (!dll_empty(queue))
+//     {
+//         node = dll_first(queue);
+//         int u = jval_i(node->val);
+//         dll_delete_node(node);
+//         number = outdegree(graph, u, output);
+//         for (int i = 0; i < number; i++)
+//         {
+//             if (visited[output[i]] == 0)
+//             {
+//                 visited[output[i]] = 1;
+//                 dll_append(queue, new_jval_i(output[i]));
+//             }
+//             if ((getEdgeValue(graph, u, output[i]) + distance[u]) < distance[output[i]])
+//             {
+//                 distance[output[i]] = getEdgeValue(graph, u, output[i]) + distance[u];
+//                 previous[output[i]] = u;
+//             }
+//         }
+//     }
+//     path[0] = t;
+//     *length = 1;
+//     int cur = t;
+//     while (previous[cur] != s)
+//     {
+//         path[*length] = previous[cur];
+//         *length = *length + 1;
+//         cur = previous[cur];
+//     }
+// }
