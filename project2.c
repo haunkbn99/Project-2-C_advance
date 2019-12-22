@@ -544,17 +544,22 @@ void Case4(Graph graph)
     JRB prev = make_jrb();
     //cay luu cac tuyen qua qua 2 diem lien tiep
     JRB root = make_jrb();
-    //luu cac tuyen qua 2 diem lien tiep trong sortpath
+    //luu cac tuyn qua 2 diem lien tiep trong sortpath
     int index1 = 0, index2 = 0;
     int path[100][100];
-    //luu cach di phai chuyen it tuyen nhat
+    int path2[100][100];
+    //luu cach di pahi chuyen it tuyen nhat
     int pathBus[100];
+    int size[100];
     for (int i = 0; i < 100; i++)
     {
         pathBus[i] = -1;
+        size[i] = 0;
+
         for (int j = 0; j < 100; j++)
         {
             path[i][j] = -1;
+            path2[i][j];
         }
     }
 
@@ -563,7 +568,6 @@ void Case4(Graph graph)
         printf("%s -> %s:", getVertex(graph, output[i]), getVertex(graph, output[i - 1]));
         jrb_traverse(node1, graph.busLine)
         {
-
             node2 = (JRB)jval_v(node1->val);
             JRB root2 = make_jrb();
             jrb_traverse(tree, node2)
@@ -588,74 +592,72 @@ void Case4(Graph graph)
         index1++;
         printf("\n");
     }
-
-
-    for (int j = 0; j < 100; j++)
+    for (int i = 0; i < index1; i++)
     {
-        if (path[0][j] != -1)
-            for (int k = 0; k < 100; k++)
+        size[i] = 0;
+        index2 = 0;
+        for (int j = 0; j < 100; j++)
+        {
+            if (path[i][j] != -1)
             {
-                if (path[1][k] != -1)
-                    if (path[0][j] == path[1][k])
-                    {
-                        pathBus[0] = path[0][j];
-                        break;
-                    }
+                printf("%d/", path[i][j]);
+                size[i]++;
+                path2[i][index2++] = path[i][j];
             }
+        }
+        printf("\n\n");
+    }
+    for (int j = 0; j < size[0]; j++)
+    {
+        for (int k = 0; k < size[1]; k++)
+        {
+            if (path2[0][j] == path2[1][k])
+            {
+                pathBus[0] = path2[0][j];
+                break;
+            }
+        }
         if (pathBus[0] != -1)
             break;
     }
     if (pathBus[0] == -1)
-    {
-        printf("hau\n");
-        pathBus[0] = path[0][0];
-    }
+        pathBus[0] = path2[0][0];
 
     for (int i = 1; i < index1; i++)
     {
-        for (int j = 0; j < 100; j++)
+        for (int j = 0; j < size[i]; j++)
         {
-
-            if (path[i][j] != -1)
+            if (path2[i + 1][0] != -1)
             {
-                printf("%d\t", path[i][j]);
-                for (int k = 0; k < 100; k++)
+                if (path2[i][j] == pathBus[i - 1])
                 {
-                    if (path[i + 1][k] != -1)
-                        if (path[i][j] == pathBus[i - 1])
-                        {
-                            if (path[i + 1][0] == -1)
-                            {
-                                pathBus[i] = path[i][j];
-                                break;
-                            }
-                            else if (path[i][j] == path[i + 1][k])
-                            {
-                                pathBus[i] = path[i][j];
-                                break;
-                            }
-                        }
+                    pathBus[i] = path2[i][j];
+                    break;
                 }
-                if (pathBus[i] == -1)
-                    for (int k = 0; k < 100; k++)
+            }
+            else
+            {
+                for (int k = 0; k < size[i + 1]; k++)
+                {
+                    if (path2[i][j] == pathBus[i - 1])
                     {
-                        if (path[i + 1][k] != -1)
-                            if (path[i][j] != path[i + 1][k])
-                            {
-                                pathBus[i] = path[i][j];
-                                break;
-                            }
+                        pathBus[i] = path2[i][j];
                     }
+                    else if (path2[i][j] == path2[i + 1][k])
+                    {
+                        pathBus[i] = path2[i][j];
+                        break;
+                    }
+                }
             }
         }
-        printf("\n");
         if (pathBus[i] == -1)
-            pathBus[i] = path[i][0];
+            pathBus[i] = path2[i][0];
     }
-    printf("check\n");
-    for (int i = 0; i < 100; i++)
+    printf("It Phai chuyen tuyen nhat\n");
+    for (int i = 0; i < index1; i++)
     {
-        printf("%d\t", pathBus[i]);
+        printf("%d/", pathBus[i]);
     }
 }
 void Case5(Graph graph)
