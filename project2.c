@@ -1,3 +1,6 @@
+//Nguyen Trung Hau
+//Dang Viet Anh
+//Nguyen Hong Phuong
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -541,7 +544,7 @@ void Case4(Graph graph)
     }
     int output[100], lenght;
     shortesPath(graph, getIdVertex(graph, name1), getIdVertex(graph, name2), output, &lenght);
-    printf("Sort Path\n");
+    printf("\n\nSort Path\n\n");
     JRB node1 = make_jrb();
     JRB node2 = make_jrb();
     JRB node3 = make_jrb();
@@ -572,7 +575,7 @@ void Case4(Graph graph)
 
     for (int i = lenght; i > 0; i--)
     {
-        printf("%s -> %s:", getVertex(graph, output[i]), getVertex(graph, output[i - 1]));
+        printf("%-30s -> %-30s: ", getVertex(graph, output[i]), getVertex(graph, output[i - 1]));
         jrb_traverse(node1, graph.busLine)
         {
             node2 = (JRB)jval_v(node1->val);
