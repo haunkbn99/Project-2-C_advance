@@ -69,15 +69,6 @@ int main()
 
     Graph g = createGraph();
     readDataMap(g);
-    // //in toan bo diem bus
-    // printJRB(g.vertices);
-    int output[100], lenght;
-    shortesPath(g, getIdVertex(g, "Ben xe Gia Lam"), getIdVertex(g, "Tran Hung Dao"), output, &lenght);
-    for (int i = 0; i < lenght; i++)
-    {
-        printf("%d\t", output[i]);
-    }
-
     while (1)
     {
         int check = menu();
@@ -104,8 +95,14 @@ int main()
         case 7:
             return 0;
         default:
-            return 0;
+        {
+            printf("-------------------------------------------------------\n");
+            printf("Input isn't correct\n");
+            printf("-------------------------------------------------------\n");
+
             break;
+        }
+        break;
         }
     }
 }
@@ -454,7 +451,11 @@ void Case1(Graph graph)
     if (getVertex(graph, id) == NULL)
         printf("ID don't exist: %d\n", id);
     else
+    {
+        printf("-------------------------------------------------------\n");
         printf("\n\nThe BusStation | ID: %d - Name: %s |\n", id, getVertex(graph, id));
+        printf("-------------------------------------------------------\n");
+    }
 }
 void Case2(Graph graph)
 {
@@ -483,11 +484,15 @@ void Case2(Graph graph)
     {
         if (output[i] == getIdVertex(graph, name2))
         {
+            printf("-------------------------------------------------------\n");
             printf("\n\nBusStation %s is adjacet %s\n", name1, name2);
+            printf("-------------------------------------------------------\n");
             return;
         }
     }
+    printf("-------------------------------------------------------\n");
     printf("\nBusStation %s isn't adjacet %s\n", name1, name2);
+    printf("-------------------------------------------------------\n");
 }
 
 void Case3(Graph graph)
@@ -502,11 +507,13 @@ void Case3(Graph graph)
     {
         int total = outdegree(graph, getIdVertex(graph, name), output);
         printf("\nBusStations adjacet %s are\n\n", name);
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
         printf("- %-5s | %-50s |\n\n", "ID", "Name BusStation");
         for (int i = 0; i < total; i++)
         {
             printf("- %-5d | %-50s |\n", output[i], getVertex(graph, output[i]));
         }
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
     }
     else
         printf("\nBusStaion Don't exist\n");
@@ -592,6 +599,7 @@ void Case4(Graph graph)
         index1++;
         printf("\n");
     }
+    //test path[][]
     for (int i = 0; i < index1; i++)
     {
         size[i] = 0;
@@ -600,12 +608,11 @@ void Case4(Graph graph)
         {
             if (path[i][j] != -1)
             {
-                printf("%d/", path[i][j]);
+                // printf("%d/", path[i][j]);
                 size[i]++;
                 path2[i][index2++] = path[i][j];
             }
         }
-        printf("\n\n");
     }
     for (int j = 0; j < size[0]; j++)
     {
@@ -654,10 +661,18 @@ void Case4(Graph graph)
         if (pathBus[i] == -1)
             pathBus[i] = path2[i][0];
     }
-    printf("It Phai chuyen tuyen nhat\n");
-    for (int i = 0; i < index1; i++)
+    // for (int i = 0; i < index1; i++)
+    // {
+    //     printf("%d/", pathBus[i]);
+    // }
+    printf("------------------------------------------------------------------------------------------------------------------\n\n");
+    printf("The Best Way to Go\n\n");
+    printf("------------------------------------------------------------------------------------------------------------------\n\n");
+    int j = 0;
+    for (int i = lenght; i > 0; i--)
     {
-        printf("%d/", pathBus[i]);
+        printf("%-50s -> %-50s: ", getVertex(graph, output[i]), getVertex(graph, output[i - 1]));
+        printf("BusLine: %s\n", getVertexBusline(graph, pathBus[j++]));
     }
 }
 void Case5(Graph graph)
@@ -673,6 +688,8 @@ void Case5(Graph graph)
         JRB node = make_jrb();
         JRB node2 = make_jrb();
         printf("\nThe BusLine through\n\n");
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
+
         jrb_traverse(node, graph.busLine)
         {
             if (node != NULL)
@@ -689,6 +706,7 @@ void Case5(Graph graph)
                 }
             }
         }
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
     }
     else
         printf("\nBusStaion Don't exist\n");
@@ -710,9 +728,11 @@ void Case6(Graph graph)
     {
         JRB tree = (JRB)jval_v(node->val);
         JRB node2 = make_jrb();
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
         printf("- %-5s | %-50s |\n", "ID", "Name");
         jrb_traverse(node2, tree)
             printf("- %-5d | %-50s |\n", jval_i(node2->val), getVertex(graph, jval_i(node2->val)));
+        printf("------------------------------------------------------------------------------------------------------------------\n\n");
     }
 }
 
